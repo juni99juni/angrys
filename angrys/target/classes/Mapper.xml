@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="afw">
+	
+	
+	<resultMap type="kr.co.DTO.userLoginDTO" id="userLogin">
+		<id property="ID" column="ID"/>
+		<result property="password" column="password"/>
+		<result property="nickname" column="nickname"/>
+	</resultMap>
+	
+	
+	
+	<resultMap type="kr.co.DTO.userFightDTO" id="userFight">
+		<id property="user_name" column="user_name"/>
+		<result property="nick_name" column="nick_name"/>
+		
+		<result property="user_att" column="user_att"/>
+		<result property="user_def" column="user_def"/>
+		<result property="user_spe" column="user_spe"/>
+		
+		<result property="user_nowHP" column="user_nowHP"/><result property="user_maxHP" column="user_maxHP"/>
+		<result property="user_nowMP" column="user_nowMP"/><result property="user_maxMP" column="user_maxMP"/>
+		
+		<result property="equip_weapon" column="equip_weapon"/>
+		<result property="equip_armor" column="equip_armor"/>
+		<result property="equip_accessory" column="equip_accessory"/>
+	</resultMap>
+	
+	
+	
+	
+	<resultMap type="kr.co.DTO.monsterDTO" id="monster">
+		<id property="monster_name" column="monster_name"/>
+		
+		<result property="monster_att" column="monster_att"/>
+		<result property="monster_def" column="monster_def"/>
+		<result property="monster_spe" column="monster_spe"/>
+		
+		<result property="monster_nowHP" column="monster_nowHP"/><result property="monster_maxHP" column="monster_maxHP"/>
+		<result property="monster_nowMP" column="monster_nowMP"/><result property="monster_maxMP" column="monster_maxMP"/>
+		
+		<result property="monster_gold" column="monster_gold"/>
+		<result property="monster_exp" column="monster_exp"/>
+		<result property="monster_jobexp" column="monster_jobexp"/>
+	</resultMap>
+	
+	
+	
+	<resultMap type="kr.co.DTO.userMoneyDTO" id="money">
+		<id property="user_name" column="user_namer"/>
+		<result property="now_money" column="now_money"/>
+		<result property="bank_money" column="bank_money"/>
+	</resultMap>
+	
+	
+	
+	<resultMap type="kr.co.DTO.userExpDTO" id="exp">
+		<id property="user_name" column="user_name"/>
+		<result property="user_job" column="user_job"/>
+		<result property="user_jobexp" column="user_jobexp"/>
+		<result property="user_level" column="user_level"/>
+		<result property="user_exp" column="user_exp"/>
+	</resultMap>
+	
+	
+	<resultMap type="kr.co.DTO.itemInfoDTO" id="item">
+		<result property="item_no" column="item_no"/>
+		<result property="item_att" column="item_att"/>
+		<result property="item_wei" column="item_wei"/>
+		<result property="item_name" column="item_name"/>
+	</resultMap>
+	
+	
+	
+	
+	
+	<select id="select_users" resultMap="userLogin">
+		SELECT * FROM spring_test1
+	</select>
+	
+	
+	<insert id="insert_user">
+		INSERT INTO user_table VALUES (#{ID}, #{password}, #{nickname})
+	</insert>
+	
+	<select id="overlap_user" resultMap="userLogin">
+		SELECT * FROM user_table WHERE ID=#{ID}
+	</select>
+	
+	
+	<select id="login_action" resultMap="userLogin">
+		SELECT * FROM user_table WHERE ID=#{ID} AND password=#{password}
+	</select>
+	
+	
+	<select id="get_nickname" resultType="String">
+		SELECT nickname FROM user_table WHERE ID=#{ID}
+	</select>
+	
+	
+	
+	
+	<select id="user_info" resultMap="userFight">
+		SELECT * FROM user_info WHERE user_name=#{userID}
+	</select>
+	
+	
+	<select id="monster_table" resultMap="monster">
+		SELECT * FROM monster_table WHERE monster_name=#{monster_name}
+	</select>
+	
+	
+	<select id="money_info" resultMap="money">
+		SELECT * FROM user_money WHERE user_name = #{ID}
+	</select>
+	
+	<select id="exp_info" resultMap="exp">
+		SELECT * FROM user_exp WHERE user_name = #{ID}
+	</select>
+	
+	
+	<select id="get_item_list" resultMap="item">
+		SELECT * FROM item_info
+	</select>
+	
+	
+	
+	<select id="getGold" resultType="int">
+		SELECT now_money FROM user_money WHERE user_name=#{ID} 
+	</select>
+	
+	<update id="heal_money">
+		UPDATE user_money SET now_money = now_money - #{now_money}  WHERE user_name = #{user_name}
+	</update>
+	
+	<update id="heal_user">
+		UPDATE user_info SET user_nowHP = user_maxHP WHERE user_name = #{ID}
+	</update>
+	
+	
+	
+	
+	<select id="get_item_info" resultMap="item">
+		SELECT * FROM item_info WHERE item_no = #{item_no} 
+	</select>
+	
+	
+	
+	<insert id="root_item" parameterType="kr.co.DTO.fightEndDTO">
+		INSERT INTO user_item VALUES (#{user_name}, #{item_result})
+	</insert>
+	
+	
+	<update id="set_HPMP">
+		UPDATE user_info SET user_nowHP = #{HP}, user_nowMP = #{MP}  WHERE user_name = #{user_name}
+	</update>
+	
+	
+	<update id="set_gold">
+		UPDATE user_money SET now_money = now_money + #{money} WHERE user_name = #{user_name}
+	</update>
+	
+	
+	<update id="set_exp">
+		UPDATE user_exp set user_exp = user_exp + #{exp}, user_jobexp = user_jobexp + #{jobexp} WHERE user_name = #{user_name}
+	</update>
+	
+	
+	
+	
+	<update id="all_save_money">
+		UPDATE user_money SET bank_money = bank_money + now_money,
+		now_money = 0 WHERE user_name = #{user_name}
+	</update>
+	
+	<update id="part_save_money">
+		UPDATE user_money SET bank_money = bank_money + #{now_money},
+		now_money = now_money - #{now_money} WHERE user_name = #{user_name}
+	</update>
+	
+	<update id="all_out_money">
+		UPDATE user_money SET now_money = now_money + bank_money,
+		bank_money = 0 WHERE user_name = #{user_name}
+	</update>
+	
+	<update id="part_out_money">
+		UPDATE user_money SET now_money = now_money + #{now_money},
+		bank_money = bank_money - #{now_money} WHERE user_name = #{user_name}
+	</update>
+	
+	
+	
+	
+	<!-- table 생성하는거 -->
+	<select id="test" parameterType="map">
+		#{create_table}
+	</select>
+	
+	
+</mapper>
