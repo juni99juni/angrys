@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="afw">
+	
+	
+	<resultMap type="kr.co.DTO.userLoginDTO" id="userLogin">
+		<id property="ID" column="ID"/>
+		<result property="password" column="password"/>
+		<result property="nickname" column="nickname"/>
+	</resultMap>
+	
+	
+	
+	<resultMap type="kr.co.DTO.userFightDTO" id="userFight">
+		<id property="user_name" column="user_name"/>
+		<result property="nick_name" column="nick_name"/>
+		
+		<result property="user_att" column="user_att"/>
+		<result property="user_def" column="user_def"/>
+		<result property="user_spe" column="user_spe"/>
+		
+		<result property="user_nowHP" column="user_nowHP"/><result property="user_maxHP" column="user_maxHP"/>
+		<result property="user_nowMP" column="user_nowMP"/><result property="user_maxMP" column="user_maxMP"/>
+		
+		<result property="equip_weapon" column="equip_weapon"/>
+		<result property="equip_armor" column="equip_armor"/>
+		<result property="equip_accessory" column="equip_accessory"/>
+	</resultMap>
+	
+	
+	
+	
+	<resultMap type="kr.co.DTO.monsterDTO" id="monster">
+		<id property="monster_name" column="monster_name"/>
+		
+		<result property="monster_att" column="monster_att"/>
+		<result property="monster_def" column="monster_def"/>
+		<result property="monster_spe" column="monster_spe"/>
+		
+		<result property="monster_nowHP" column="monster_nowHP"/><result property="monster_maxHP" column="monster_maxHP"/>
+		<result property="monster_nowMP" column="monster_nowMP"/><result property="monster_maxMP" column="monster_maxMP"/>
+		
+		<result property="monster_gold" column="monster_gold"/>
+		<result property="monster_exp" column="monster_exp"/>
+		<result property="monster_jobexp" column="monster_jobexp"/>
+	</resultMap>
+	
+	
+	
+	<resultMap type="kr.co.DTO.userMoneyDTO" id="money">
+		<id property="user_name" column="user_namer"/>
+		<result property="now_money" column="now_money"/>
+		<result property="bank_money" column="bank_money"/>
+	</resultMap>
+	
+	
+	
+	<resultMap type="kr.co.DTO.userExpDTO" id="exp">
+		<id property="user_name" column="user_name"/>
+		<result property="user_job" column="user_job"/>
+		<result property="user_jobexp" column="user_jobexp"/>
+		<result property="user_level" column="user_level"/>
+		<result property="user_exp" column="user_exp"/>
+	</resultMap>
+	
+	
+	<resultMap type="kr.co.DTO.itemInfoDTO" id="item">
+		<result property="item_no" column="item_no"/>
+		<result property="item_att" column="item_att"/>
+		<result property="item_wei" column="item_wei"/>
+		<result property="item_name" column="item_name"/>
+		<result property="price" column="price"/>
+		<result property="item_category" column="category"/>
+		
+		
+		
+		<result property="item_no" column="equip_weapon"/>
+		<result property="item_no" column="equip_armor"/>
+		<result property="item_no" column="equip_accessory"/>
+		
+		<result property="pk_no" column="weapon_pk_no"/>
+		<result property="pk_no" column="armor_pk_no"/>
+		<result property="pk_no" column="accessory_pk_no"/>
+		
+		<result property="pk_no" column="pk_no"/>
+		<result property="user_name" column="user_name"/>
+	</resultMap>
+	
+	
+	<!-- 
+	<resultMap type="kr.co.DTO.itemChangeDTO" id="change">
+		<result property="item_no" column="equip_weapon"/>
+		<result property="item_no" column="equip_armor"/>
+		<result property="item_no" column="equip_accessory"/>
+		
+		<result property="item_no" column="item_no"/>
+		
+		<result property="pk_no" column="weapon_pk_no"/>
+		<result property="pk_no" column="armor_pk_no"/>
+		<result property="pk_no" column="accessory_pk_no"/>
+		
+		<result property="pk_no" column="pk_no"/>
+		
+		<result property="user_name" column="user_name"/>
+		<result property="category" column="category"/>
+	</resultMap>
+	 -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<select id="ID_overlap_check" resultMap="userLogin">
+		SELECT * FROM user_table WHERE ID=#{ID}
+	</select>
+	
+	<select id="nickname_overlap_check" resultMap="userLogin">
+		SELECT * FROM user_table WHERE nickname=#{nickname}
+	</select>
+	
+	
+	
+	
+	<!-- 회원가입 처리 -->
+	<!-- 만들어야 할 테이블 - user_table, user_info, user_money, user_exp -->
+	<insert id="signup_user_table">
+		INSERT INTO user_table VALUES (#{ID}, #{password}, #{nickname})
+	</insert>
+	
+	<insert id="signup_user_info">
+		INSERT INTO user_info 
+		VALUES (
+			#{ID} ,	#{nickname} ,
+			
+			50 ,50 ,50 ,
+			
+			500 ,   500 ,
+			100 ,   100 ,
+			
+			0 ,	0 ,	0 ,
+			
+			0 ,	0 ,	0 
+		)
+	</insert>
+	<!-- item_primary_key.nextval -->
+	<insert id="signup_user_money">
+		INSERT INTO user_money
+		VALUES (#{ID},0,0)
+	</insert>
+	
+	<insert id="signup_user_exp">
+		INSERT INTO user_exp
+		VALUES (#{ID}, '백수', 0, 1, 0)
+	</insert>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<select id="login_action" resultMap="userLogin">
+		SELECT * FROM user_table WHERE ID=#{ID} AND password=#{password}
+	</select>
+	
+	
+	<select id="get_nickname" resultType="String">
+		SELECT nickname FROM user_table WHERE ID=#{ID}
+	</select>
+	
+	
+	
+	
+	<select id="user_info" resultMap="userFight">
+		SELECT * FROM user_info WHERE user_name=#{userID}
+	</select>
+	
+	
+	<select id="monster_table" resultMap="monster">
+		SELECT * FROM monster_table WHERE monster_name=#{monster_name}
+	</select>
+	
+	
+	<select id="money_info" resultMap="money">
+		SELECT * FROM user_money WHERE user_name = #{ID}
+	</select>
+	
+	<select id="exp_info" resultMap="exp">
+		SELECT * FROM user_exp WHERE user_name = #{ID}
+	</select>
+	
+	
+	<select id="get_item_list" resultMap="item">
+		SELECT * FROM item_info
+	</select>
+	
+	
+	
+	<select id="getGold" resultType="int">
+		SELECT now_money FROM user_money WHERE user_name=#{ID} 
+	</select>
+	
+	<update id="heal_money">
+		UPDATE user_money SET now_money = now_money - #{now_money}  WHERE user_name = #{user_name}
+	</update>
+	
+	<update id="heal_user">
+		UPDATE user_info SET user_nowHP = user_maxHP WHERE user_name = #{ID}
+	</update>
+	
+	
+	
+	
+	<select id="get_item_info" resultMap="item">
+		SELECT * FROM item_info WHERE item_no = #{item_no} 
+	</select>
+	
+	
+	
+	<insert id="root_item">
+		INSERT INTO user_item VALUES (item_primary_key.nextval, #{item_name}, #{item_no}, #{item_category})
+	</insert>
+	
+	
+	<update id="set_HPMP">
+		UPDATE user_info SET user_nowHP = #{HP}, user_nowMP = #{MP}  WHERE user_name = #{user_name}
+	</update>
+	
+	
+	<update id="set_gold">
+		UPDATE user_money SET now_money = now_money + #{money} WHERE user_name = #{user_name}
+	</update>
+	
+	
+	<update id="set_exp">
+		UPDATE user_exp set user_exp = user_exp + #{exp}, user_jobexp = user_jobexp + #{jobexp} WHERE user_name = #{user_name}
+	</update>
+	
+	
+	
+	
+	<update id="all_save_money">
+		UPDATE user_money SET bank_money = bank_money + now_money,
+		now_money = 0 WHERE user_name = #{user_name}
+	</update>
+	
+	<update id="part_save_money">
+		UPDATE user_money SET bank_money = bank_money + #{now_money},
+		now_money = now_money - #{now_money} WHERE user_name = #{user_name}
+	</update>
+	
+	<update id="all_out_money">
+		UPDATE user_money SET now_money = now_money + bank_money,
+		bank_money = 0 WHERE user_name = #{user_name}
+	</update>
+	
+	<update id="part_out_money">
+		UPDATE user_money SET now_money = now_money + #{now_money},
+		bank_money = bank_money - #{now_money} WHERE user_name = #{user_name}
+	</update>
+	
+	
+	
+	<select id="user_item_count" resultType="int">
+		SELECT count(*) FROM user_item WHERE user_name = #{ID}
+	</select>
+	
+	
+	
+	
+	<select id="shop_item_list" resultMap="item">
+		SELECT * FROM item_shop WHERE shop_division = #{location}
+	</select>
+	
+	
+	<select id="user_item_num_list" resultMap="item">
+		SELECT pk_no, item_no FROM user_item WHERE user_name = #{ID}
+	</select>
+	
+	
+	
+	
+	
+	
+	<!-- 
+		아이템 사기 
+		골드 감소 / 아이템 저장
+	 -->
+	 <!-- 돈이랑 user_name은 userMoneyDTO로 받아오도록 하자 -->
+	<update id="buy_item_gold">
+		UPDATE user_money SET now_money = now_money - #{now_money}
+		WHERE user_name = #{user_name}
+	</update>
+	
+	<insert id="buy_item_add">
+		INSERT INTO user_item VALUES (item_primary_key.nextval, #{item_name}, #{item_no}, #{item_category}) 
+	</insert>
+	
+	<!-- 
+		아이템 팔기
+		골드 증가 / 아이템 삭제
+	 -->
+	<!-- 돈이랑 user_name은 userMoneyDTO로 받아오도록 하자 -->
+	<update id="sell_item_gold">
+		UPDATE user_money SET now_money = now_money + #{now_money}
+		WHERE user_name = #{user_name}
+	</update>
+	
+	<delete id="sell_item_del">
+		DELETE FROM user_item WHERE pk_no = #{pk_no}
+	</delete>
+	
+	
+	<select id="pk_item_info" resultMap="item">
+		SELECT * FROM item_info WHERE item_no = (SELECT item_no FROM user_item WHERE pk_no=#{pk_no})
+	</select>
+	
+	
+	<select id="get_castle_info" resultType="kr.co.DTO.castleInfoDTO">
+		SELECT * FROM castle_info WHERE castle_name='으힝'
+	</select>
+	
+	
+	
+	
+	<!-- 
+		장비 착용
+		기존 장비와 장착할 장비의 정보를 받아서 저장 후
+		서로의 위치를 바꿔준다 (update)
+		필요한 정보
+		
+		장착한 아이템 - 장비 번호, 장비 고유 번호, 유저 이름
+		장착 할 아이템 - 장비 번호, 장비 고유 번호
+	 -->
+	
+	<!-- 
+	<select id="get_equip_item_info">
+		SELECT #{} FROM user_info WHERE user_name = #{item_name} 
+	</select>
+	 -->
+	 
+	<!-- pk_no으로 아이템 카테고리 확인하기 --> 
+	<select id="item_category_check" resultType="String">
+		SELECT category FROM user_item WHERE pk_no = #{pk_no}
+	</select>
+	
+	
+	<!-- pk_no아이템의 category를 이용해서 user_info에 있는 해당 category의 장착 아이템 불러오기 -->
+	<select id="category_equip_item_check" resultMap="item">
+		SELECT equip_${item_category}, ${item_category}_pk_no, user_name
+		FROM user_info
+		WHERE user_name = #{user_name}
+	</select>
+	
+	
+	
+	
+	<!-- 인벤토리 아이템 장착하기 -->
+	<update id="equipment_on">
+		UPDATE user_info 
+		SET equip_${item_category} = #{item_no}, ${item_category}_pk_no = #{pk_no} 
+		WHERE user_name = #{user_name}
+	</update>
+	
+	<!-- 장착한 아이템 인벤토리에서 삭제하기 -->
+	<delete id="equip_item_delete">
+		DELETE FROM user_item
+		WHERE pk_no = #{pk_no}
+	</delete>
+	
+	<!-- 장착했던 아이템 인벤토리로 옮기기 -->
+	<insert id="equipment_off">
+		INSERT INTO user_item
+		VALUES (#{pk_no}, #{user_name}, #{item_no}, #{item_category})
+	</insert>
+	
+	
+	
+	
+	<!-- 아이템 번호로 아이템 이름 찾기 -->
+	<select id="get_item_name" resultType="String">
+		SELECT item_name FROM item_info WHERE item_no=#{item_no}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- table 생성하는거 -->
+	<select id="test" parameterType="map">
+		#{create_table}
+	</select>
+	
+	
+	
+</mapper>
